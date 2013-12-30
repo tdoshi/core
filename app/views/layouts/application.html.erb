@@ -1,14 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Ytann</title>
+  <title>Youtube Ann</title>
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
 <body>
+<div id="fb-root"></div>
 
-<%= yield %>
+<div id="navigation" class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container-fluid">
+      <a class="brand" href="/">Youtube Ann</a>
+      <span class="beta-tag">beta</span>
+      <p class="navbar-text pull-right">
+      	<% if current_user and current_user.provider == "facebook" %>
+        	<%= image_tag "http://graph.facebook.com/#{current_user.uid}/picture", :size => "32x32" %>
+			    <%= current_user.name %>
+			    <%= link_to "Sign out", signout_path, id: "sign_out" %>
+			  <% else %>
+			    <%= link_to "Sign in with Facebook", "/auth/facebook", id: "sign_in" %>
+			  <% end %>
+     </p>
+    </div>
+  </div>
+</div>
 
+<% flash.each do |name, msg| %>
+  <div class="alert alert-<%= name == :notice ? "success" : "error" %>">
+    <a class="close" data-dismiss="alert">&#215;</a>
+    <%= content_tag :div, msg, :id => "flash_#{name}" if msg.is_a?(String) %>
+  </div>
+<% end %>
+
+
+<div class="container">	
+	<%= yield %>
+</div>
 </body>
 </html>
