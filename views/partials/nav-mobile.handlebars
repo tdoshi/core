@@ -1,0 +1,23 @@
+<nav role="navigation" class="navbar navbar-inverse navbar-fixed-top" bs-navbar>
+    <div class="top-nav container-fluid">
+    <ul class="nav-pill nav nav-pills nav-justified">
+        <li data-match-route="/?(alternate)?" id="index-nav">
+          <a class="nav-icon" href="#/"><i class="fa fa-home"></i></a>
+        </li>
+        <li data-match-route="/search" id="search-nav">
+          <a class="nav-icon" href="#/search"><i class="fa fa-search"></i></a>
+        </li>
+        <li data-match-route="/profile/.*" id="profile-nav">
+          <a class="nav-icon" href="#/profile/{{user.id}}"><i class="fa fa-user"></i></a>
+        </li>
+        <li data-match-route="/history" id="history-nav">
+          <a class="nav-icon" href="#/history"><i class="fa fa-calendar"></i></a>
+        </li>
+        <li class="dropdown" id="more-button">
+            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                <li><a href="/logout" id="sign_out"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li>
+            </ul>
+        </li>
+    </ul>
+    </div>
+</nav>
