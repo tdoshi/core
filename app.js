@@ -33,7 +33,9 @@ app.use(express.methodOverride());
 app.use(express.cookieParser('ytann secret key'));
 app.use(express.session());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(express.bodyParser());
+app.use(passport.initialize());
+app.use(passport.session());
 // The below exposes request-level info to the views, needed for authenticated user
 // needs to go before app.router
 app.use(function(req, res, next){
