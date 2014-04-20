@@ -10,6 +10,10 @@ angular.module('app', dependencies).
       templateUrl: '/partials/home.html',
       controller: 'HomeCtrl'
     }).
+    when('/users', {
+      templateUrl: '/partials/users.html',
+      controller: 'UserCtrl'
+    }).
     otherwise({
       redirectTo: '/'
     });
