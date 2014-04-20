@@ -7,6 +7,8 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var handlebars = require('express3-handlebars');
+var passport = require('passport');
+var FacebookStrategy = require('passport-facebook').Strategy;
 var mongoose = require('mongoose');
 
 var index = require('./routes/index');
@@ -19,6 +21,7 @@ var database_uri = process.env.MONGOLAB_URI || local_database_uri
 mongoose.connect(database_uri);
 
 var app = express();
+var dbUser = require('./models/user');
 
 // all environments
 app.set('port', process.env.PORT || 5000);
@@ -49,14 +52,80 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+passport.serializeUser(function(user, done) {
+  done(null, user._id);
+});
+
+passport.deserializeUser(function(id, done) {
+  dbUser.User
+    .findOne({_id: id},
+    function(err, user) {
+      if (err) done(err, null);
+      if (user) {
+        done(null, user);
+      } else {
+        done(null, false, {message: "incorrect sign in"});
+      }
+    });
+});
+
+passport.use(new FacebookStrategy(
+  {
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_SECRET,
+    callbackURL: process.env.FACEBOOK_CALLBACK_URL
+  },
+  function(accessToken, refreshToken, profile, done) {
+    console.log("accessToken", accessToken);
+    dbUser.User
+      .findOne({ fb_id: profile.id },
+        function(err, user) {
+          if (err) done(err);
+          if (!user) {
+            // create new user
+            user = new dbUser.User({
+              fb_id: profile._json.id,
+              // first_name: profile._json.first_name,
+              first_name: "April",
+              last_name: profile._json.last_name,
+              gender: profile._json.gender,
+              img_path: 'http://graph.facebook.com/' + profile._json.id + '/picture?height=64&width=64',
+              location: profile._json.location.name,
+              email: profile._json.email,
+              access_token: accessToken,
+              my_field: "hello"
+            });
+            console.log('accessToken2', accessToken);
+            user.save(function(err) {
+              if (err) console.log(err);
+              done(null, user);
+            });
+          } else {
+            done(null, user);
+          }
+        });
+  }
+));
+
 // Add routes here
 app.get('/splash', index.splash);
 app.get('/', index.view);
 app.get('/project/:id', project.projectInfo);
 app.post('/project/new', project.addProject);
 app.post('/project/:id/delete', project.deleteProject);
-// Example route
-// app.get('/users', user.list);
+
+// login and logout
+app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
+app.get('/auth/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/splash' }),
+  function(req, res) {
+    // Successful authentication
+    res.redirect('/');
+  });
+app.get('/logout', function(req, res) {
+  req.logout();
+  res.redirect('/splash');
+});
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
