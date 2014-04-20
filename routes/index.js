@@ -1,6 +1,3 @@
-
-var models = require('../models');
-
 exports.splash = function(req, res) {
 	// var data = {
  //    app_id: process.env.FACEBOOK_APP_ID

@@ -12,7 +12,6 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var mongoose = require('mongoose');
 
 var index = require('./routes/index');
-var project = require('./routes/project');
 
 // Connect to the Mongo database, whether locally or on Heroku
 var local_database_name = 'ytann';
@@ -85,8 +84,7 @@ passport.use(new FacebookStrategy(
             // create new user
             user = new dbUser.User({
               fb_id: profile._json.id,
-              // first_name: profile._json.first_name,
-              first_name: "April",
+              first_name: profile._json.first_name,
               last_name: profile._json.last_name,
               gender: profile._json.gender,
               img_path: 'http://graph.facebook.com/' + profile._json.id + '/picture?height=64&width=64',
@@ -110,9 +108,6 @@ passport.use(new FacebookStrategy(
 // Add routes here
 app.get('/splash', index.splash);
 app.get('/', index.view);
-app.get('/project/:id', project.projectInfo);
-app.post('/project/new', project.addProject);
-app.post('/project/:id/delete', project.deleteProject);
 
 // login and logout
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));

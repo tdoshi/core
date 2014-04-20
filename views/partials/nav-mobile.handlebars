@@ -1,26 +1,36 @@
 <nav role="navigation" class="navbar navbar-inverse navbar-fixed-top" bs-navbar>
-    <div class="top-nav container-fluid">
+  <div class="top-nav container-fluid">
     <ul class="nav-pill nav nav-pills nav-justified">
-        <li data-match-route="/?(alternate)?" id="index-nav">
-          <a class="nav-icon" href="#/"><i class="fa fa-home"></i></a>
-        </li>
-        <li data-match-route="/search" id="search-nav">
-          <a class="nav-icon" href="#/search"><i class="fa fa-search"></i></a>
-        </li>
-        <li data-match-route="/profile/.*" id="profile-nav">
-          <a class="nav-icon" href="#/profile/{{user.id}}"><i class="fa fa-user"></i></a>
-        </li>
-        <li data-match-route="/history" id="history-nav">
-          <a class="nav-icon" href="#/history"><i class="fa fa-calendar"></i></a>
-        </li>
-        <li class="dropdown" id="more-button">
-            <a class="nav-icon" class="dropdown-toggle" data-toggle="dropdown">
-                <img src="{{user.img_path}}" class="img-rounded nav-img">  <i class="fa fa-caret-down"></i>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                <li><a href="/logout" id="sign_out"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li>
-            </ul>
-        </li>
+      <li data-match-route="/?(alternate)?" id="index-nav">
+        <a class="nav-icon" href="#/"><i class="fa fa-home"></i></a>
+      </li>
+      <li data-match-route="/search" id="search-nav">
+        <a class="nav-icon" href="#/search"><i class="fa fa-search"></i></a>
+      </li>
+      <li data-match-route="/profile/.*" id="profile-nav">
+        <a class="nav-icon" href="#/profile/{{user.id}}"><i class="fa fa-user"></i></a>
+      </li>
+      <li data-match-route="/history" id="history-nav">
+        <a class="nav-icon" href="#/history"><i class="fa fa-calendar"></i></a>
+      </li>
+      <li class="dropdown" id="more-button">
+        {{#if user}}
+        <a class="nav-icon" class="dropdown-toggle" data-toggle="dropdown">
+          <img src="{{user.img_path}}" class="img-rounded nav-img">  <i class="fa fa-caret-down"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-right" role="menu">
+          <li><a href="/logout" id="sign_out"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li>
+        </ul>
+        {{else}}
+        <a class="nav-icon" class="dropdown-toggle" data-toggle="dropdown">
+          Guest <i class="fa fa-caret-down"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-right" role="menu">
+          <li><a href="/splash"><i class="fa fa-sign-out fa-fw"></i> Login</a></li>
+        </ul>
+        {{/if}}
+        
+      </li>
     </ul>
-    </div>
+  </div>
 </nav>
