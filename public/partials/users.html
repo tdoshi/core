@@ -1,0 +1,13 @@
+<div>Hello world from users</div>
+<div class="list-group">
+	<div ng-repeat="user in users">
+	  <div class="list-group-item">
+	    <div class="list-group-item-text media">
+	      <img ng-src="{{user.img_path}}" class="img-rounded media-object pull-left" width="64"/>
+	      <div class="media-body">
+	      	{{user.first_name}} {{user.last_name}}
+	      </div>
+	    </div>
+	  </div>
+	</div>
+</div>

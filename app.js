@@ -12,6 +12,7 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var mongoose = require('mongoose');
 
 var index = require('./routes/index');
+var users = require('./routes/users');
 
 // Connect to the Mongo database, whether locally or on Heroku
 var local_database_name = 'ytann';
@@ -20,7 +21,7 @@ var database_uri = process.env.MONGOLAB_URI || local_database_uri
 mongoose.connect(database_uri);
 
 var app = express();
-var dbUser = require('./models/user');
+var db = require('./models');
 
 // all environments
 app.set('port', process.env.PORT || 5000);
@@ -56,7 +57,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-  dbUser.User
+  db.User
     .findOne({_id: id},
     function(err, user) {
       if (err) done(err, null);
@@ -76,22 +77,21 @@ passport.use(new FacebookStrategy(
   },
   function(accessToken, refreshToken, profile, done) {
     console.log("accessToken", accessToken);
-    dbUser.User
+    db.User
       .findOne({ fb_id: profile.id },
         function(err, user) {
           if (err) done(err);
           if (!user) {
             // create new user
-            user = new dbUser.User({
+            user = new db.User({
               fb_id: profile._json.id,
               first_name: profile._json.first_name,
               last_name: profile._json.last_name,
               gender: profile._json.gender,
               img_path: 'http://graph.facebook.com/' + profile._json.id + '/picture?height=64&width=64',
-              location: profile._json.location.name,
+              // location: profile._json.location.name,
               email: profile._json.email,
-              access_token: accessToken,
-              my_field: "hello"
+              access_token: accessToken
             });
             console.log('accessToken2', accessToken);
             user.save(function(err) {
@@ -108,6 +108,7 @@ passport.use(new FacebookStrategy(
 // Add routes here
 app.get('/splash', index.splash);
 app.get('/', index.view);
+app.get('/users', users.list);
 
 // login and logout
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
