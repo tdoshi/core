@@ -1,11 +1,22 @@
 .content {
-  margin-top: 75px; 
-  padding-top: 10px;
-  padding-bottom: 20px;
-  /*background-color: #FFFCD9;*/
-  border-radius: 10px;
+	margin-top: 75px; 
+	padding-top: 10px;
+	padding-bottom: 20px;
+	/*background-color: #FFFCD9;*/
+	border-radius: 10px;
 }
 
 .nav-img {
-  width: 24px;
+	width: 24px;
+}
+
+
+@media (min-width: 320px) {
+	.nav-justified > li {
+		display: table-cell;
+		width: 1%;
+	}
+	.nav-justified > li > a {
+		margin: 5px 2.5px;
+	}
 }
