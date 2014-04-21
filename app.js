@@ -21,7 +21,7 @@ var database_uri = process.env.MONGOLAB_URI || local_database_uri
 mongoose.connect(database_uri);
 
 var app = express();
-var dbUser = require('./models/user');
+var db = require('./models');
 
 // all environments
 app.set('port', process.env.PORT || 5000);
@@ -57,7 +57,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-  dbUser.User
+  db.User
     .findOne({_id: id},
     function(err, user) {
       if (err) done(err, null);
@@ -77,13 +77,13 @@ passport.use(new FacebookStrategy(
   },
   function(accessToken, refreshToken, profile, done) {
     console.log("accessToken", accessToken);
-    dbUser.User
+    db.User
       .findOne({ fb_id: profile.id },
         function(err, user) {
           if (err) done(err);
           if (!user) {
             // create new user
-            user = new dbUser.User({
+            user = new db.User({
               fb_id: profile._json.id,
               first_name: profile._json.first_name,
               last_name: profile._json.last_name,
