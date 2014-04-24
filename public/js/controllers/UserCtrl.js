@@ -1,11 +1,15 @@
-var UserCtrl = function($scope, $http) {
-  $scope.users = [];
 
-  console.log('getting all users');
-  $http.get('/users').success(function(users) {
-  	console.log(users);
-  	$scope.users = users;
-  })
+
+var UserCtrl = function($scope, $http) {
+	$scope.my_var = 'helo';
+
+  console.log('getting a single user');
+
+  $scope.runThis = function() {
+  	$scope.my_var = "yayayayay";
+  	console.log("button clikced");
+  };
+
 };
 
 UserCtrl.$inject = ['$scope', '$http'];
