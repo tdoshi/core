@@ -110,6 +110,8 @@ app.get('/splash', index.splash);
 app.get('/', index.view);
 app.get('/users', users.list);
 app.get('/user/:id', users.findOne);
+// app.get('/create', ann.create);
+
 // login and logout
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 app.get('/auth/facebook/callback',

@@ -19,6 +19,7 @@ var UserSchema = new Schema({
 
 var AnnotationSchema = new Schema({
 	duration: Number,
+	start_time: Number,
 	num_votes: Number,
 	content: String
 });
