@@ -1,15 +1,10 @@
+var UserCtrl = function($scope, $http, $routeParams) {
+	$scope.user = {};
 
-
-var UserCtrl = function($scope, $http) {
-	$scope.my_var = 'helo';
-
-  console.log('getting a single user');
-
-  $scope.runThis = function() {
-  	$scope.my_var = "yayayayay";
-  	console.log("button clikced");
-  };
-
+  $http.get('/user/'+$routeParams.id).success(function(user) {
+  	if (!user) console.log("null user");
+  	$scope.user = user;
+  });
 };
 
-UserCtrl.$inject = ['$scope', '$http'];
+UserCtrl.$inject = ['$scope', '$http', '$routeParams'];
