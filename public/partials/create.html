@@ -6,11 +6,13 @@
     <input type="text" class="form-control" id="ytlink" placeholder="Enter link" ng-model="whole.video_link">
   </div>
   <button type="submit" class="btn btn-default" ng-click="loadVideo()">Submit</button>
-
   <div class="container" ng-show="whole.video_id">
   	<div class="row">
   		<div class="col-xs-7">
   			<div id="ytplayer"></div>
+  			<!-- <iframe id="ytplayer" type="text/html" width="640" height="390"
+  src="http://www.youtube.com/embed/7IoRIj9XQfQ?enablejsapi=1"
+  frameborder="0"/> -->
   		</div>
   		<div class="col-xs-5">
   			Annotations here

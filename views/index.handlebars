@@ -54,5 +54,12 @@
 <script src="/js/controllers/UsersCtrl.js"></script>
 <script src="/js/controllers/AnnCtrl.js"></script>
 <script src="/js/main.js"></script>
+<script type="text/javascript">
+  // Load the IFrame Player API code asynchronously.
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/player_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+</script>
 </body>
 </html>
