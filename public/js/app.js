@@ -12,6 +12,10 @@ angular.module('app', dependencies).
     }).
     when('/users', {
       templateUrl: '/partials/users.html',
+      controller: 'UsersCtrl'
+    }).
+    when('/user/:id', {
+      templateUrl: '/partials/user.html',
       controller: 'UserCtrl'
     }).
     otherwise({

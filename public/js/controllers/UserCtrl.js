@@ -1,11 +1,10 @@
-var UserCtrl = function($scope, $http) {
-  $scope.users = [];
+var UserCtrl = function($scope, $http, $routeParams) {
+	$scope.user = {};
 
-  console.log('getting all users');
-  $http.get('/users').success(function(users) {
-  	console.log(users);
-  	$scope.users = users;
-  })
+  $http.get('/user/'+$routeParams.id).success(function(user) {
+  	if (!user) console.log("null user");
+  	$scope.user = user;
+  });
 };
 
-UserCtrl.$inject = ['$scope', '$http'];
+UserCtrl.$inject = ['$scope', '$http', '$routeParams'];
