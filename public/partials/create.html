@@ -9,13 +9,23 @@
   <div class="container" ng-show="whole.video_id">
   	<div class="row">
   		<div class="col-xs-7">
-  			<div id="ytplayer"></div>
-  			<!-- <iframe id="ytplayer" type="text/html" width="640" height="390"
-  src="http://www.youtube.com/embed/7IoRIj9XQfQ?enablejsapi=1"
-  frameborder="0"/> -->
+  			<div id="ytplayer"></div>  			
+  			<button class="btn btn-default" ng-click="annotate()">Annotate</button>
+  			<div ng-show="allowAnnotation">
+  				<input type="number" placeholder="sec" ng-model="cur_ann.time" class="input-small"></input>
+  				<input type="text" placeholder="Write something" ng-model="cur_ann.content"></input>
+  				<button class="btn btn-default" ng-click="completeAnnotation()">Add</button>
+  			</div>
   		</div>
   		<div class="col-xs-5">
-  			Annotations here
+  			<div class="panel panel-success" ng-show="annotations.length > 0">
+  				<div class="panel-heading">
+				  	<h3 class="panel-title">Annotations</h3>
+				  </div>
+				  <ul class="list-group" ng-repeat="ann in annotations">
+					  <li class="list-group-item" ng-click="examineAnn(ann)">{{ann.time}}: {{ann.content}}</li>
+					</ul>
+  			</div>
   		</div>
   	</div>
   </div>
