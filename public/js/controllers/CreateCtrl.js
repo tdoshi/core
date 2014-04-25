@@ -4,17 +4,31 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   	video_link: "https://www.youtube.com/watch?v=7IoRIj9XQfQ",
   	video_id: "7IoRIj9XQfQ"
   };
-  $scope.player = {};
   $scope.error = "";
   $scope.youtubeLoaded = false;
+  
+  // $scope.annotations = [];
+  $scope.annotations = [
+  	{	content: "lovely",
+  		duration: 5,
+  		time: 30	
+  	},
+  	{	content: "even nicer",
+  		duration: 8,
+  		time: 44	
+  	},
+  	{	content: "my fav",
+  		duration: 0,
+  		time: 58
+  	},
+  ];
   $scope.curAnn = {
-  	duration: 5
+  	duration: 5,
+  	content: ''
   };
   $scope.playText = "Play snippet";
-
-  $scope.annotations = [];
-  // $scope.allowAnnotation = false;
-  $scope.allowAnnotation = true;
+  $scope.allowAnnotation = false;
+  // $scope.allowAnnotation = true;
   // TODO: make this frozen so it cannot be changed
   VideoStatusEnum = Object.freeze({
   	UNSTARTED: -1,
@@ -66,26 +80,29 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   $scope.completeAnnotation = function() {
   	$scope.allowAnnotation = false;
   	$scope.annotations.push($scope.curAnn);
-  	$scope.curAnn = {};
-		console.log('hi', $scope.annotations);
+  	$scope.curAnn = {
+  		duration: 5,
+  		content: ''
+  	};
+		console.log('list of annotations', $scope.annotations);
   	$scope.player.playVideo();
   };
 
-  $scope.examineAnn = function(ann) {
-  	console.log('time of ann:', ann.time);
-  	$scope.player.seekTo(ann.time);
+  $scope.exit = function() {
+  	console.log('yet another function');
+  	$scope.allowAnnotation = false;
   };
 
-  $scope.playSnippet = function() {
-  	$scope.player.seekTo($scope.curAnn.time);
+  $scope.playSnippet = function(ann) {
+  	console.log('playing snippet starting at:', ann.time);
+  	$scope.player.seekTo(ann.time);
   	$scope.player.playVideo();
   	$scope.playText = "Playing...";
   	function update() {
   		var curTime = $scope.player.getCurrentTime();
-  		if (curTime > $scope.curAnn.time + $scope.curAnn.duration) {
+  		if (curTime > ann.time + ann.duration) {
   			$scope.playText = "Play snippet";
   			$scope.player.pauseVideo();
-  			clearInterval(interval);
   			$interval.cancel(interval);
   		}
   	}
@@ -96,6 +113,9 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   	});
   };
 
+  $scope.publish = function() {
+  	console.log('going to publish these annotations!');
+  };
 
   // This gets called once the Youtube iframe API code has loaded
   $window.onYouTubeIframeAPIReady = function() {
