@@ -1,14 +1,24 @@
-
 <div class="col-xs-3">
 	<img ng-src="{{user.img_path}}"></img>
 </div>
-
 
 <div class="col-xs-9">
 	<h1>{{user.first_name}} {{user.last_name}}</h1>
 	<p>email: <a href="mailto:{{user.email}}">{{user.email}}</a></p>
 </div>
+<hr>
 
-<div>
-	<h5>All of {{user.first_name}}'s annotations</h5>
+<div ng-hide="annList">
+	<h4>{{user.first_name}} has not created any annotations!</h4>
+</div>
+
+<div ng-show="annList">
+	<h3>All of {{user.first_name}}'s annotations:</h3>
+	<div ng-repeat="ann in annList" class="annItem">
+		<img src="http://img.youtube.com/vi/{{ann.video_id}}/mqdefault.jpg" class="col-xs-4 img-rounded"></img>
+		<div class="col-xs-8">
+			<p>{{ann.title}}</p>
+			<p>Updated {{ann.updated_at}}</p>
+		</div>
+	</div>
 </div>

@@ -15,7 +15,7 @@ angular.module('app', dependencies).
       templateUrl: '/partials/users.html',
       controller: 'UsersCtrl'
     }).
-    when('/user/:id', {
+    when('/profile/:id', {
       templateUrl: '/partials/user.html',
       controller: 'UserCtrl'
     }).
