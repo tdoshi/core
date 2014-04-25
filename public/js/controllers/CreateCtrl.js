@@ -1,4 +1,4 @@
-var CreateCtrl = function($scope, $http, $window) {
+var CreateCtrl = function($scope, $http, $window, $interval) {
   // The whole annotation, which includes many individual annotations
   $scope.whole = {
   	video_link: "https://www.youtube.com/watch?v=7IoRIj9XQfQ",
@@ -84,13 +84,18 @@ var CreateCtrl = function($scope, $http, $window) {
   		var curTime = $scope.player.getCurrentTime();
   		if (curTime > $scope.curAnn.time + $scope.curAnn.duration) {
   			$scope.playText = "Play snippet";
-  			$scope.$apply();
   			$scope.player.pauseVideo();
   			clearInterval(interval);
+  			$interval.cancel(interval);
   		}
   	}
-  	var interval = setInterval(update, 1000);
+  	var interval = $interval(update, 1000);
+  	
+  	$scope.$on("$destroy", function(e) {
+  		$interval.cancel(update);
+  	});
   };
+
 
   // This gets called once the Youtube iframe API code has loaded
   $window.onYouTubeIframeAPIReady = function() {
@@ -100,5 +105,5 @@ var CreateCtrl = function($scope, $http, $window) {
   };
 };
 
-CreateCtrl.$inject = ['$scope', '$http', '$window'];
+CreateCtrl.$inject = ['$scope', '$http', '$window', '$interval'];
 
