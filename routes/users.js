@@ -7,9 +7,16 @@ exports.list = function (req, res) {
 }
 
 exports.findOne = function (req, res) {
-	console.log('hello from server '  + req.params.id);
-	// res.send('hello my favortie site');
-	db.User.findOne({"_id" : req.params.id}, function(err, user) {
-		res.send(user);
+	// TODO: check if user is signed in here
+	var userid = req.params.id;
+	db.User.findOne({ _id: userid }, function(err, user) {
+		db.AnnotationWhole.find({ _creator: userid, privacy: 'public' }, 'title video_id updated_at', function(err, annList) {
+			console.log("annList", annList);
+			var data = {
+				'user': user,
+				'annList': annList
+			};
+			res.send(data);
+		});
 	})
 }

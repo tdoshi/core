@@ -1,6 +1,7 @@
 var dependencies = [
   'ngRoute',
-  'mgcrea.ngStrap'
+  'mgcrea.ngStrap',
+  'ui.slider'
 ];
 
 angular.module('app', dependencies).
@@ -14,13 +15,17 @@ angular.module('app', dependencies).
       templateUrl: '/partials/users.html',
       controller: 'UsersCtrl'
     }).
-    when('/user/:id', {
+    when('/profile/:id', {
       templateUrl: '/partials/user.html',
       controller: 'UserCtrl'
     }).
     when('/create', {
       templateUrl: '/partials/create.html',
-      controller: 'AnnCtrl'
+      controller: 'CreateCtrl'
+    }).
+    when('/consume/:id', {
+      templateUrl: '/partials/consume.html',
+      controller: 'ConsumeCtrl'
     }).
     otherwise({
       redirectTo: '/'

@@ -19,7 +19,8 @@
     "mongodb": "*",
     "mongoose": "*",
     "passport": "0.2.x",
-    "passport-facebook": "1.0.x"
+    "passport-facebook": "1.0.x",
+    "moment": "2.5.x"
   },
   "engines": {
     "node": "0.10.x"

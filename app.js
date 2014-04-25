@@ -13,6 +13,7 @@ var mongoose = require('mongoose');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+var ann = require('./routes/ann')
 
 // Connect to the Mongo database, whether locally or on Heroku
 var local_database_name = 'ytann';
@@ -110,7 +111,8 @@ app.get('/splash', index.splash);
 app.get('/', index.view);
 app.get('/users', users.list);
 app.get('/user/:id', users.findOne);
-// app.get('/create', ann.create);
+app.post('/create', ann.create);
+app.get('/consume/:id', ann.consume);
 
 // login and logout
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));

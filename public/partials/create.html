@@ -9,21 +9,38 @@
   <div class="container" ng-show="whole.video_id">
   	<div class="row">
   		<div class="col-xs-7">
-  			<div id="ytplayer"></div>  			
-  			<button class="btn btn-default" ng-click="annotate()">Annotate</button>
-  			<div ng-show="allowAnnotation">
-  				<input type="number" placeholder="sec" ng-model="cur_ann.time" class="input-small"></input>
-  				<input type="text" placeholder="Write something" ng-model="cur_ann.content"></input>
-  				<button class="btn btn-default" ng-click="completeAnnotation()">Add</button>
+  			<div id="ytplayer"></div>  	
+  			<div id="annContainer">annotations will go here</div>		
+  			<button class="btn btn-default" ng-click="annotate()" ng-show="!allowAnnotation">Annotate</button>
+  			<div ng-show="allowAnnotation" class="annotation"> 					
+				  <div class="form-group col-xs-6">
+				  	<label>Start Time: </label> <span class="annTime">{{curAnn.start_time}}</span>
+	  				<br />
+	  				<label>Duration: </label> <span class="annTime">{{curAnn.duration}}</span>
+	  				<div ui-slider min="0" max="10" ng-model="curAnn.duration"></div>
+				  </div>
+  				<div class="form-group col-xs-6">
+				    <label class="sr-only" for="annContent">Content</label>
+				    <textarea class="form-control" id="annContent" ng-model="curAnn.content" placeholder="Write something"></textarea>
+				  </div>
+  				<br />
+  				<div class="pull-right">
+  					<button class="btn btn-default" ng-click="exit()">Exit</button>
+  					<button class="btn btn-default" ng-click="playSnippet(curAnn)">{{playText}}</button>
+  					<button class="btn btn-default" ng-disabled="curAnn.content.length == 0" ng-click="completeAnnotation()">Add Annotation</button>
+  				</div>
+  				<div class="clearfix"></div>
   			</div>
   		</div>
+
   		<div class="col-xs-5">
+  			<button class="btn btn-primary" ng-click="publish()">Publish!</button>
   			<div class="panel panel-success" ng-show="annotations.length > 0">
   				<div class="panel-heading">
 				  	<h3 class="panel-title">Annotations</h3>
 				  </div>
 				  <ul class="list-group" ng-repeat="ann in annotations">
-					  <li class="list-group-item" ng-click="examineAnn(ann)">{{ann.time}}: {{ann.content}}</li>
+					  <li class="list-group-item" ng-click="playSnippet(ann)"><strong>{{ann.start_time}}</strong>: {{ann.content}}</li>
 					</ul>
   			</div>
   		</div>
