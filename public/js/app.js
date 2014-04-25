@@ -20,7 +20,7 @@ angular.module('app', dependencies).
     }).
     when('/create', {
       templateUrl: '/partials/create.html',
-      controller: 'AnnCtrl'
+      controller: 'CreateCtrl'
     }).
     otherwise({
       redirectTo: '/'

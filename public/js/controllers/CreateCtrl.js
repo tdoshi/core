@@ -1,4 +1,4 @@
-var AnnCtrl = function($scope, $http, $window) {
+var CreateCtrl = function($scope, $http, $window) {
   // The whole annotation, which includes many individual annotations
   $scope.whole = {
   	video_link: "https://www.youtube.com/watch?v=7IoRIj9XQfQ",
@@ -10,7 +10,8 @@ var AnnCtrl = function($scope, $http, $window) {
   $scope.cur_ann = {};
 
   $scope.annotations = [];
-  $scope.allowAnnotation = false;
+  // $scope.allowAnnotation = false;
+  $scope.allowAnnotation = true;
   // TODO: make this frozen so it cannot be changed
   VideoStatusEnum = Object.freeze({
   	UNSTARTED: -1,
@@ -81,5 +82,5 @@ var AnnCtrl = function($scope, $http, $window) {
 
 };
 
-AnnCtrl.$inject = ['$scope', '$http', '$window'];
+CreateCtrl.$inject = ['$scope', '$http', '$window'];
 

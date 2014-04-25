@@ -9,14 +9,28 @@
   <div class="container" ng-show="whole.video_id">
   	<div class="row">
   		<div class="col-xs-7">
-  			<div id="ytplayer"></div>  			
+  			<div id="ytplayer"></div>  	
+  			<div id="annContainer">annotations will go here</div>		
   			<button class="btn btn-default" ng-click="annotate()">Annotate</button>
-  			<div ng-show="allowAnnotation">
-  				<input type="number" placeholder="sec" ng-model="cur_ann.time" class="input-small"></input>
-  				<input type="text" placeholder="Write something" ng-model="cur_ann.content"></input>
-  				<button class="btn btn-default" ng-click="completeAnnotation()">Add</button>
+  			<div ng-show="allowAnnotation" class="annotation"> 					
+				  <div class="form-group col-xs-6">
+				  	<label>Start Time: </label> <span class="annStartTime">{{cur_ann.time}}</span>
+	  				<br />
+	  				<label>Duration: </label>
+				  </div>
+  				<div class="form-group col-xs-6">
+				    <label class="sr-only" for="annContent">Content</label>
+				    <textarea class="form-control" id="annContent" placeholder="Write something"></textarea>
+				  </div>
+  				<br />
+  				<div class="pull-right">
+  					<button class="btn btn-default" ng-click="playSnippet()">Play snippet</button>
+  					<button class="btn btn-default" ng-click="completeAnnotation()">Add Annotation</button>
+  				</div>
+  				<div class="clearfix"></div>
   			</div>
   		</div>
+
   		<div class="col-xs-5">
   			<div class="panel panel-success" ng-show="annotations.length > 0">
   				<div class="panel-heading">
