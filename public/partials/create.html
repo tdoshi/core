@@ -14,7 +14,7 @@
   			<button class="btn btn-default" ng-click="annotate()" ng-show="!allowAnnotation">Annotate</button>
   			<div ng-show="allowAnnotation" class="annotation"> 					
 				  <div class="form-group col-xs-6">
-				  	<label>Start Time: </label> <span class="annTime">{{curAnn.time}}</span>
+				  	<label>Start Time: </label> <span class="annTime">{{curAnn.start_time}}</span>
 	  				<br />
 	  				<label>Duration: </label> <span class="annTime">{{curAnn.duration}}</span>
 	  				<div ui-slider min="0" max="10" ng-model="curAnn.duration"></div>
@@ -40,7 +40,7 @@
 				  	<h3 class="panel-title">Annotations</h3>
 				  </div>
 				  <ul class="list-group" ng-repeat="ann in annotations">
-					  <li class="list-group-item" ng-click="playSnippet(ann)"><strong>{{ann.time}}</strong>: {{ann.content}}</li>
+					  <li class="list-group-item" ng-click="playSnippet(ann)"><strong>{{ann.start_time}}</strong>: {{ann.content}}</li>
 					</ul>
   			</div>
   		</div>

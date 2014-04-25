@@ -11,15 +11,15 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   $scope.annotations = [
   	{	content: "lovely",
   		duration: 5,
-  		time: 30	
+  		start_time: 30	
   	},
   	{	content: "even nicer",
   		duration: 8,
-  		time: 44	
+  		start_time: 44	
   	},
   	{	content: "my fav",
   		duration: 0,
-  		time: 58
+  		start_time: 58
   	},
   ];
   $scope.curAnn = {
@@ -71,7 +71,7 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   	if (state == VideoStatusEnum.PLAYING) {
   		$scope.allowAnnotation = true;
   		$scope.player.pauseVideo();
-  		$scope.curAnn.time = Math.floor($scope.player.getCurrentTime());
+  		$scope.curAnn.start_time = Math.floor($scope.player.getCurrentTime());
   	} else if (state == VideoStatusEnum.PAUSED || state == VideoStatusEnum.UNSTARTED || state == VideoStatusEnum.VIDEO_CUED || state == VideoStatusEnum.ENDED) {
   		$scope.player.playVideo();
   	}
@@ -94,13 +94,13 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   };
 
   $scope.playSnippet = function(ann) {
-  	console.log('playing snippet starting at:', ann.time);
-  	$scope.player.seekTo(ann.time);
+  	console.log('playing snippet starting at:', ann.start_time);
+  	$scope.player.seekTo(ann.start_time);
   	$scope.player.playVideo();
   	$scope.playText = "Playing...";
   	function update() {
   		var curTime = $scope.player.getCurrentTime();
-  		if (curTime > ann.time + ann.duration) {
+  		if (curTime > ann.start_time + ann.duration) {
   			$scope.playText = "Play snippet";
   			$scope.player.pauseVideo();
   			$interval.cancel(interval);
@@ -115,6 +115,18 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
 
   $scope.publish = function() {
   	console.log('going to publish these annotations!');
+  	// TODO: allow option for public or unlisted
+  	$scope.whole.privacy = 'public';
+  	// TODO: allow user to give title
+  	$scope.whole.title = 'My placeholder title';
+  	$scope.whole.annotations = $scope.annotations;
+  	var data = {annotationWhole: $scope.whole}
+  	$http.post('/create', data).
+  		success(function(data) {
+  			console.log("Got data back!", data);
+  		}).error(function(err) {
+  			console.log('unable to save this to your profile', err);
+  		});
   };
 
   // This gets called once the Youtube iframe API code has loaded
