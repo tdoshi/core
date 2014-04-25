@@ -7,7 +7,10 @@ var CreateCtrl = function($scope, $http, $window) {
   $scope.player = {};
   $scope.error = "";
   $scope.youtubeLoaded = false;
-  $scope.cur_ann = {};
+  $scope.curAnn = {
+  	duration: 5
+  };
+  $scope.playText = "Play snippet";
 
   $scope.annotations = [];
   // $scope.allowAnnotation = false;
@@ -54,7 +57,7 @@ var CreateCtrl = function($scope, $http, $window) {
   	if (state == VideoStatusEnum.PLAYING) {
   		$scope.allowAnnotation = true;
   		$scope.player.pauseVideo();
-  		$scope.cur_ann.time = Math.floor($scope.player.getCurrentTime());
+  		$scope.curAnn.time = Math.floor($scope.player.getCurrentTime());
   	} else if (state == VideoStatusEnum.PAUSED || state == VideoStatusEnum.UNSTARTED || state == VideoStatusEnum.VIDEO_CUED || state == VideoStatusEnum.ENDED) {
   		$scope.player.playVideo();
   	}
@@ -62,8 +65,8 @@ var CreateCtrl = function($scope, $http, $window) {
 
   $scope.completeAnnotation = function() {
   	$scope.allowAnnotation = false;
-  	$scope.annotations.push($scope.cur_ann);
-  	$scope.cur_ann = {};
+  	$scope.annotations.push($scope.curAnn);
+  	$scope.curAnn = {};
 		console.log('hi', $scope.annotations);
   	$scope.player.playVideo();
   };
@@ -73,13 +76,28 @@ var CreateCtrl = function($scope, $http, $window) {
   	$scope.player.seekTo(ann.time);
   };
 
+  $scope.playSnippet = function() {
+  	$scope.player.seekTo($scope.curAnn.time);
+  	$scope.player.playVideo();
+  	$scope.playText = "Playing...";
+  	function update() {
+  		var curTime = $scope.player.getCurrentTime();
+  		if (curTime > $scope.curAnn.time + $scope.curAnn.duration) {
+  			$scope.playText = "Play snippet";
+  			$scope.$apply();
+  			$scope.player.pauseVideo();
+  			clearInterval(interval);
+  		}
+  	}
+  	var interval = setInterval(update, 1000);
+  };
+
   // This gets called once the Youtube iframe API code has loaded
   $window.onYouTubeIframeAPIReady = function() {
   	$scope.youtubeLoaded = true;
   	$scope.loadVideo();
   	console.log('loaded yt player API');
-  }
-
+  };
 };
 
 CreateCtrl.$inject = ['$scope', '$http', '$window'];
