@@ -1,8 +1,6 @@
 var db = require('../models');
 
 exports.create = function (req, res) {
-	console.log('we got into the create server side!');
-	console.log("auth?", req.user);
 	var annWholeData = req.body.annotationWhole;
 	console.log("annotationWhole", annWholeData);
 	if (req.user == undefined) {
@@ -20,4 +18,14 @@ exports.create = function (req, res) {
 		if (err) console.log('there was an error while saving');
 	});
 	res.send("saved video to profile");
+}
+
+exports.consume = function(req, res) {
+	var annid = req.params.id;
+	console.log('server side of consume', annid);
+	db.AnnotationWhole.findOne({ _id: annid }, function(err, annWhole) {
+		if (err) console.log(err);
+		console.log(annWhole);
+		res.send(annWhole);
+	});	
 }

@@ -23,6 +23,10 @@ angular.module('app', dependencies).
       templateUrl: '/partials/create.html',
       controller: 'CreateCtrl'
     }).
+    when('/consume/:id', {
+      templateUrl: '/partials/consume.html',
+      controller: 'ConsumeCtrl'
+    }).
     otherwise({
       redirectTo: '/'
     });

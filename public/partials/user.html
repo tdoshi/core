@@ -15,7 +15,7 @@
 <div ng-show="annList">
 	<h3>All of {{user.first_name}}'s annotations:</h3>
 	<div ng-repeat="ann in annList" class="annItem">
-		<img src="http://img.youtube.com/vi/{{ann.video_id}}/mqdefault.jpg" class="col-xs-4 img-rounded"></img>
+		<a href="#/consume/{{ann._id}}"><img src="http://img.youtube.com/vi/{{ann.video_id}}/mqdefault.jpg" class="col-xs-4 img-rounded"></img></a>
 		<div class="col-xs-8">
 			<p>{{ann.title}}</p>
 			<p>Updated {{ann.updated_at}}</p>

@@ -112,6 +112,7 @@ app.get('/', index.view);
 app.get('/users', users.list);
 app.get('/user/:id', users.findOne);
 app.post('/create', ann.create);
+app.get('/consume/:id', ann.consume);
 
 // login and logout
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
