@@ -79,13 +79,39 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
 
   $scope.completeAnnotation = function() {
   	$scope.allowAnnotation = false;
-  	$scope.annotations.push($scope.curAnn);
+  	// $scope.annotations.push($scope.curAnn);
+  	var insertionInd = locationOf($scope.curAnn, $scope.annotations);
+  	console.log("going to insert at ", insertionInd);
+  	$scope.annotations.splice(insertionInd, 0, $scope.curAnn);
   	$scope.curAnn = {
   		duration: 5,
   		content: ''
   	};
 		console.log('list of annotations', $scope.annotations);
   	$scope.player.playVideo();
+  };
+
+  // Really need tests
+  // http://stackoverflow.com/questions/1344500/efficient-way-to-insert-a-number-into-a-sorted-array-of-numbers
+  locationOf = function(elem, arr, start, end) {
+  	var start = start || 0;
+  	var end = end || arr.length;
+  	var pivot = parseInt((end + start) / 2, 10);
+  	console.log(elem, arr, start, end, pivot);
+  	if (arr[pivot].start_time == elem.start_time) return pivot;
+  	if (end - start <= 1) {
+  		console.log("comparing", arr[pivot], elem);
+  		if (arr[pivot].start_time > elem.start_time) {
+  			return pivot;
+  		} else {
+  			return pivot + 1;
+  		} 
+  	}
+  	if (arr[pivot].start_time < elem.start_time) {
+	    return locationOf(elem, arr, pivot, end);
+	  } else {
+	    return locationOf(elem, arr, start, pivot);
+	  }
   };
 
   $scope.exit = function() {
