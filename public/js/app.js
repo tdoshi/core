@@ -1,7 +1,8 @@
 var dependencies = [
   'ngRoute',
   'mgcrea.ngStrap',
-  'ui.slider'
+  'ui.slider',
+  'ytann.services'
 ];
 
 angular.module('app', dependencies).

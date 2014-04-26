@@ -1,4 +1,4 @@
-var CreateCtrl = function($scope, $http, $window, $interval) {
+var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded) {
   // The whole annotation, which includes many individual annotations
   $scope.whole = {
   	video_link: "https://www.youtube.com/watch?v=7IoRIj9XQfQ",
@@ -6,8 +6,11 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   	title: "placeholder"
   };
   $scope.error = "";
-  $scope.youtubeLoaded = false;
-  
+  $scope.videoDim = {
+  	height: 340,
+  	width: 600
+  };
+
   // $scope.annotations = [];
   $scope.annotations = [
   	{	content: "lovely",
@@ -30,7 +33,7 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   $scope.playText = "Play snippet";
   $scope.allowAnnotation = false;
   // $scope.allowAnnotation = true;
-  // TODO: make this frozen so it cannot be changed
+
   VideoStatusEnum = Object.freeze({
   	UNSTARTED: -1,
   	ENDED: 0,
@@ -39,8 +42,8 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   	BUFFERING: 3,
   	VIDEO_CUED: 5
   });
-
-  $scope.loadVideo = function(youtubeLink) {
+	
+  $scope.loadVideo = function() {
   	var re = /v=([\w-]+)/;
   	var matched = $scope.whole.video_link.match(re);
   	if (matched.length != 2) {
@@ -57,10 +60,16 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   	}
   	$scope.whole.video_id = matched[1];
   	console.log($scope.whole.video_id);
-  	if ($scope.youtubeLoaded) {
+  	// Reset 
+  	$scope.annotations = [];
+
+  	console.log('checking to see if we can load iframe');
+  	if (YoutubeAPILoaded.sharedObject.youtubeLoaded) {
+  		console.log('should recreate new player now');
+  		if ($scope.player != undefined) $scope.player.destroy();
   		$scope.player = new YT.Player('ytplayer', {
-	      height: '390',
-	      width: '640',
+	      height: $scope.videoDim.height,
+	      width: $scope.videoDim.width,
 	      videoId: $scope.whole.video_id
 	    });
   		$http.get("/queryyt/" + $scope.whole.video_id).success(function(data) {
@@ -71,6 +80,13 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   	}
   };
 
+  // All variables are reset when this controller starts again (clicking on the tab), so we attempt to auto load the iframe if possible 
+  if ($scope.whole.video_link) {
+  	$scope.loadVideo();	
+  }
+  
+
+  // Allow user to create an individual annotation
   $scope.annotate = function() {
   	var state = $scope.player.getPlayerState();
   	// TODO: robust casework, what about buffering?
@@ -83,6 +99,7 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   	}
   };
 
+  // Add individual annotation to list of annotations
   $scope.completeAnnotation = function() {
   	$scope.allowAnnotation = false;
   	// $scope.annotations.push($scope.curAnn);
@@ -165,11 +182,12 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
 
   // This gets called once the Youtube iframe API code has loaded
   $window.onYouTubeIframeAPIReady = function() {
-  	$scope.youtubeLoaded = true;
+  	// $scope.youtubeLoaded = true;
+  	YoutubeAPILoaded.sharedObject.youtubeLoaded = true;
   	$scope.loadVideo();
   	console.log('loaded yt player API');
   };
 };
 
-CreateCtrl.$inject = ['$scope', '$http', '$window', '$interval'];
+CreateCtrl.$inject = ['$scope', '$http', '$window', '$interval', 'YoutubeAPILoaded'];
 

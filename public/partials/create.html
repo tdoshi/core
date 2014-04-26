@@ -1,11 +1,14 @@
 <div></div>
 
 <form role="form">
-	<div class="form-group">
-    <label for="ytlink">Youtube link</label>
-    <input type="text" class="form-control" id="ytlink" placeholder="Enter link" ng-model="whole.video_link">
+	<div>
+		<div class="form-group">
+	    <label for="ytlink">Youtube link</label>
+	    <input type="text" class="form-control" id="ytlink" placeholder="Enter link" ng-model="whole.video_link">
+	  </div>
+	  <button type="submit" class="btn btn-primary" ng-click="loadVideo()">Submit</button>
   </div>
-  <button type="submit" class="btn btn-default" ng-click="loadVideo()">Submit</button>
+  <hr>
   <div class="container" ng-show="whole.video_id">
   	<div class="row">
   		<div class="col-xs-7">
@@ -34,7 +37,10 @@
   		</div>
 
   		<div class="col-xs-5" ng-show="annotations.length > 0">
-  			<button class="btn btn-primary" ng-click="publish()">Publish!</button><br />
+  			<!-- <button class="btn btn-danger pull-left" ng-click="startOver()">Start Over</button> -->
+  			<button class="btn btn-primary pull-right" ng-click="publish()">Publish!</button>
+  			<div class="clearfix"></div>
+  			<br />
   			<form class="form-horizontal" role="form">
 				  <div class="form-group">
 				    <label for="title" class="col-sm-2 control-label">Title</label>
