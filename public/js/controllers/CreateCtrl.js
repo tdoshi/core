@@ -1,8 +1,8 @@
 var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded) {
   // The whole annotation, which includes many individual annotations
   $scope.whole = {
-  	video_link: "https://www.youtube.com/watch?v=7IoRIj9XQfQ",
-  	video_id: "7IoRIj9XQfQ",
+  	video_link: "https://www.youtube.com/watch?v=UA0wb6E3hyg",
+  	video_id: "UA0wb6E3hyg",
   	title: "placeholder"
   };
   $scope.error = "";
@@ -61,9 +61,9 @@ var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded) {
   	$scope.whole.video_id = matched[1];
   	console.log($scope.whole.video_id);
   	// Reset 
-  	$scope.annotations = [];
+  	// $scope.annotations = [];
 
-  	console.log('checking to see if we can load iframe');
+  	console.log('checking to see if we can load iframe', YoutubeAPILoaded.sharedObject.youtubeLoaded);
   	if (YoutubeAPILoaded.sharedObject.youtubeLoaded) {
   		console.log('should recreate new player now');
   		if ($scope.player != undefined) $scope.player.destroy();
@@ -168,8 +168,6 @@ var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded) {
   	console.log('going to publish these annotations!');
   	// TODO: allow option for public or unlisted
   	$scope.whole.privacy = 'public';
-  	// TODO: allow user to give title
-  	$scope.whole.title = 'My placeholder title';
   	$scope.whole.annotations = $scope.annotations;
   	var data = {annotationWhole: $scope.whole}
   	$http.post('/create', data).
