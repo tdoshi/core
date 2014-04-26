@@ -40,7 +40,10 @@
 				  	<h3 class="panel-title">Annotations</h3>
 				  </div>
 				  <ul class="list-group" ng-repeat="ann in annotations">
-					  <li class="list-group-item" ng-click="playSnippet(ann)"><strong>{{ann.start_time}}</strong>: {{ann.content}}</li>
+					  <li class="list-group-item indAnn" ng-click="playSnippet(ann)">
+					  	<strong>{{ann.start_time}}</strong>: {{ann.content}}
+					  	<i class="fa fa-times pull-right" ng-click="deleteAnn($index)"></i>
+					  </li>
 					</ul>
   			</div>
   		</div>

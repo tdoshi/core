@@ -81,7 +81,6 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   	$scope.allowAnnotation = false;
   	// $scope.annotations.push($scope.curAnn);
   	var insertionInd = locationOf($scope.curAnn, $scope.annotations);
-  	console.log("going to insert at ", insertionInd);
   	$scope.annotations.splice(insertionInd, 0, $scope.curAnn);
   	$scope.curAnn = {
   		duration: 5,
@@ -97,10 +96,8 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   	var start = start || 0;
   	var end = end || arr.length;
   	var pivot = parseInt((end + start) / 2, 10);
-  	console.log(elem, arr, start, end, pivot);
   	if (arr[pivot].start_time == elem.start_time) return pivot;
   	if (end - start <= 1) {
-  		console.log("comparing", arr[pivot], elem);
   		if (arr[pivot].start_time > elem.start_time) {
   			return pivot;
   		} else {
@@ -112,6 +109,10 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
 	  } else {
 	    return locationOf(elem, arr, start, pivot);
 	  }
+  };
+
+  $scope.deleteAnn = function(ind) {
+  	$scope.annotations.splice(ind, 1);
   };
 
   $scope.exit = function() {
