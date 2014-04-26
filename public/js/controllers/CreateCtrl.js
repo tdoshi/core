@@ -2,7 +2,8 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   // The whole annotation, which includes many individual annotations
   $scope.whole = {
   	video_link: "https://www.youtube.com/watch?v=7IoRIj9XQfQ",
-  	video_id: "7IoRIj9XQfQ"
+  	video_id: "7IoRIj9XQfQ",
+  	title: "placeholder"
   };
   $scope.error = "";
   $scope.youtubeLoaded = false;
@@ -62,6 +63,11 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
 	      width: '640',
 	      videoId: $scope.whole.video_id
 	    });
+  		$http.get("/queryyt/" + $scope.whole.video_id).success(function(data) {
+  				var vidTitle = data.items[0].snippet.title
+  				$scope.whole.title = vidTitle;
+     });
+
   	}
   };
 
@@ -93,6 +99,7 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   // Really need tests
   // http://stackoverflow.com/questions/1344500/efficient-way-to-insert-a-number-into-a-sorted-array-of-numbers
   locationOf = function(elem, arr, start, end) {
+  	if (arr.length == 0) return 0;
   	var start = start || 0;
   	var end = end || arr.length;
   	var pivot = parseInt((end + start) / 2, 10);
