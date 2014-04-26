@@ -3,12 +3,17 @@ var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded) {
   $scope.whole = {
   	video_link: "https://www.youtube.com/watch?v=UA0wb6E3hyg",
   	video_id: "UA0wb6E3hyg",
-  	title: "placeholder"
+  	title: "placeholder",
+  	duration: 100
   };
   $scope.error = "";
   $scope.videoDim = {
   	height: 340,
   	width: 600
+  };
+  $scope.visualAnnStyle = {
+  	width: $scope.videoDim.width + 'px',
+  	'background-color': '#F9F9F9'
   };
 
   // $scope.annotations = [];
@@ -32,7 +37,6 @@ var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded) {
   };
   $scope.playText = "Play snippet";
   $scope.allowAnnotation = false;
-  // $scope.allowAnnotation = true;
 
   VideoStatusEnum = Object.freeze({
   	UNSTARTED: -1,
@@ -70,8 +74,13 @@ var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded) {
   		$scope.player = new YT.Player('ytplayer', {
 	      height: $scope.videoDim.height,
 	      width: $scope.videoDim.width,
-	      videoId: $scope.whole.video_id
+	      videoId: $scope.whole.video_id,
+	      events: {
+	      	'onReady': onPlayerReady
+	      }
 	    });
+  		console.log('duration is', $scope.player);
+	    $scope.whole.duration = $scope.player.getDuration();
   		$http.get("/queryyt/" + $scope.whole.video_id).success(function(data) {
   				var vidTitle = data.items[0].snippet.title
   				$scope.whole.title = vidTitle;
@@ -79,6 +88,11 @@ var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded) {
 
   	}
   };
+
+  onPlayerReady = function(event) {
+  	console.log('the player has loaded');
+  	console.log($scope.player.getDuration());
+  }
 
   // All variables are reset when this controller starts again (clicking on the tab), so we attempt to auto load the iframe if possible 
   if ($scope.whole.video_link) {
@@ -177,6 +191,28 @@ var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded) {
   			console.log('unable to save this to your profile', err);
   		});
   };
+
+  $scope.makeSingleVisualAnn = function(ann) {
+  	// $scope.$watch( "player" , function(newValue, oldValue) {
+  	// 	console.log('watched value of scope.player');
+  	// 	console.log(newValue);
+  	// 	console.log($scope.player);
+  	// });
+  	// console.log('yes!!!!', ann, $scope.whole.duration);  	
+  	var annWidth = ann.duration / 198 * $scope.videoDim.width;
+  	var annLeft = ann.start_time / 198 * $scope.videoDim.width;
+  	return {
+	  	border: '2px solid',
+	  	top: '6px',
+	  	position: 'absolute',
+	  	width: annWidth + 'px',
+	  	left: annLeft + 'px',
+	  	height: '10px',
+	  	cursor: 'pointer',
+	  	'border-radius': '2px',
+	  	'background-color': 'green'
+	  };
+  }
 
   // This gets called once the Youtube iframe API code has loaded
   $window.onYouTubeIframeAPIReady = function() {
