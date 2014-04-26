@@ -25,6 +25,8 @@
 	border: 1px solid #B65656;
 	height: 25px;
 	margin-bottom: 10px;
+	position: absolute;
+	top: 340px;
 }
 
 .annotation {
@@ -37,4 +39,13 @@
 .annTime {
 	padding-left: 10px;
 	font-size: 16px;
+}
+
+.indAnn:hover {
+	cursor: pointer;
+ 	background-color: #F9F9F9;
+}
+
+.annotationDown {
+	margin-top: 30px;
 }

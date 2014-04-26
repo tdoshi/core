@@ -1,46 +1,68 @@
 <div></div>
 
 <form role="form">
-	<div class="form-group">
-    <label for="ytlink">Youtube link</label>
-    <input type="text" class="form-control" id="ytlink" placeholder="Enter link" ng-model="whole.video_link">
+	<div>
+		<div class="form-group">
+	    <label for="ytlink">Youtube link</label>
+	    <input type="text" class="form-control" id="ytlink" placeholder="Enter link" ng-model="whole.video_link">
+	  </div>
+	  <button type="submit" class="btn btn-primary" ng-click="loadVideo()">Submit</button>
   </div>
-  <button type="submit" class="btn btn-default" ng-click="loadVideo()">Submit</button>
+  <hr>
   <div class="container" ng-show="whole.video_id">
   	<div class="row">
   		<div class="col-xs-7">
   			<div id="ytplayer"></div>  	
-  			<div id="annContainer">annotations will go here</div>		
-  			<button class="btn btn-default" ng-click="annotate()" ng-show="!allowAnnotation">Annotate</button>
-  			<div ng-show="allowAnnotation" class="annotation"> 					
-				  <div class="form-group col-xs-6">
-				  	<label>Start Time: </label> <span class="annTime">{{curAnn.start_time}}</span>
+  			<div id="annContainer" ng-style="visualAnnStyle">
+  				<div class="singleVisualAnn" ng-repeat="ann in annotations" ng-style="makeSingleVisualAnn(ann)" ng-click="playSnippet(ann)"></div>
+  			</div>		
+  			<div class="annotationDown">
+	  			<button class="btn btn-default" ng-click="annotate()" ng-show="!allowAnnotation">Annotate</button>
+	  			<div ng-show="allowAnnotation" class="annotation"> 					
+					  <div class="form-group col-xs-6">
+					  	<label>Start Time: </label> <span class="annTime">{{curAnn.start_time}}</span>
+		  				<br />
+		  				<label>Duration: </label> <span class="annTime">{{curAnn.duration}}</span>
+		  				<div ui-slider min="0" max="10" ng-model="curAnn.duration"></div>
+					  </div>
+	  				<div class="form-group col-xs-6">
+					    <label class="sr-only" for="annContent">Content</label>
+					    <textarea class="form-control" id="annContent" ng-model="curAnn.content" placeholder="Write something"></textarea>
+					  </div>
 	  				<br />
-	  				<label>Duration: </label> <span class="annTime">{{curAnn.duration}}</span>
-	  				<div ui-slider min="0" max="10" ng-model="curAnn.duration"></div>
-				  </div>
-  				<div class="form-group col-xs-6">
-				    <label class="sr-only" for="annContent">Content</label>
-				    <textarea class="form-control" id="annContent" ng-model="curAnn.content" placeholder="Write something"></textarea>
-				  </div>
-  				<br />
-  				<div class="pull-right">
-  					<button class="btn btn-default" ng-click="exit()">Exit</button>
-  					<button class="btn btn-default" ng-click="playSnippet(curAnn)">{{playText}}</button>
-  					<button class="btn btn-default" ng-disabled="curAnn.content.length == 0" ng-click="completeAnnotation()">Add Annotation</button>
-  				</div>
-  				<div class="clearfix"></div>
+	  				<div class="pull-right">
+	  					<button class="btn btn-default" ng-click="exit()">Exit</button>
+	  					<button class="btn btn-default" ng-click="playSnippet(curAnn)">{{playText}}</button>
+	  					<button class="btn btn-default" ng-disabled="curAnn.content.length == 0" ng-click="completeAnnotation()">Add Annotation</button>
+	  				</div>
+	  				<div class="clearfix"></div>
+	  			</div>
   			</div>
   		</div>
 
-  		<div class="col-xs-5">
-  			<button class="btn btn-primary" ng-click="publish()">Publish!</button>
-  			<div class="panel panel-success" ng-show="annotations.length > 0">
+  		<div class="col-xs-5" ng-show="annotations.length > 0">
+  			<!-- <button class="btn btn-danger pull-left" ng-click="startOver()">Start Over</button> -->
+  			<button class="btn btn-primary pull-right" ng-click="publish()">Publish!</button>
+  			<div class="clearfix"></div>
+  			<br />
+  			<form class="form-horizontal" role="form">
+				  <div class="form-group">
+				    <label for="title" class="col-sm-2 control-label">Title</label>
+				    <div class="col-sm-10">
+				      <input type="text" class="form-control" id="title" text="Rahul" ng-model="whole.title">
+				  	</div>
+					</div>
+				</form>
+				<div class="clearfix"></div>
+  			<div class="panel panel-success">
   				<div class="panel-heading">
 				  	<h3 class="panel-title">Annotations</h3>
 				  </div>
 				  <ul class="list-group" ng-repeat="ann in annotations">
-					  <li class="list-group-item" ng-click="playSnippet(ann)"><strong>{{ann.start_time}}</strong>: {{ann.content}}</li>
+					  <li class="list-group-item indAnn" ng-click="playSnippet(ann)">
+					  	<strong>{{ann.start_time}}</strong>: {{ann.content}}
+					  	<i class="fa fa-times pull-right" ng-click="deleteAnn($index)"></i>
+					  </li>
 					</ul>
   			</div>
   		</div>

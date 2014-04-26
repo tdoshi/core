@@ -1,4 +1,5 @@
 var db = require('../models');
+var https = require('https');
 
 exports.create = function (req, res) {
 	var annWholeData = req.body.annotationWhole;
@@ -28,4 +29,23 @@ exports.consume = function(req, res) {
 		console.log(annWhole);
 		res.send(annWhole);
 	});	
+}
+
+// Retrieve data about video from youtube.
+// Reference: https://developers.google.com/youtube/v3/getting-started
+exports.queryYoutube = function(req, res) {
+	https.get("https://www.googleapis.com/youtube/v3/videos?id=" + req.params.id + "&key=" + process.env.GOOGLE_PUBLIC_API_SERVER + "&fields=items(id,snippet(title),statistics)&part=snippet,statistics", function(resp){
+		var str = '';
+	  // append chunk of data to str
+	  resp.on('data', function (chunk) {
+	    str += chunk;
+	  });
+	  // whole response has been recieved
+	  resp.on('end', function () {
+	    res.send(str);
+	  });
+	}).on("error", function(e){
+	  console.log("Google API call failed", e);
+	  res.send(e);
+	});
 }

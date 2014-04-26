@@ -1,12 +1,21 @@
-var CreateCtrl = function($scope, $http, $window, $interval) {
+var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded) {
   // The whole annotation, which includes many individual annotations
   $scope.whole = {
-  	video_link: "https://www.youtube.com/watch?v=7IoRIj9XQfQ",
-  	video_id: "7IoRIj9XQfQ"
+  	video_link: "https://www.youtube.com/watch?v=UA0wb6E3hyg",
+  	video_id: "UA0wb6E3hyg",
+  	title: "placeholder",
+  	duration: 100
   };
   $scope.error = "";
-  $scope.youtubeLoaded = false;
-  
+  $scope.videoDim = {
+  	height: 340,
+  	width: 600
+  };
+  $scope.visualAnnStyle = {
+  	width: $scope.videoDim.width + 'px',
+  	'background-color': '#F9F9F9'
+  };
+
   // $scope.annotations = [];
   $scope.annotations = [
   	{	content: "lovely",
@@ -28,8 +37,7 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   };
   $scope.playText = "Play snippet";
   $scope.allowAnnotation = false;
-  // $scope.allowAnnotation = true;
-  // TODO: make this frozen so it cannot be changed
+
   VideoStatusEnum = Object.freeze({
   	UNSTARTED: -1,
   	ENDED: 0,
@@ -38,8 +46,8 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   	BUFFERING: 3,
   	VIDEO_CUED: 5
   });
-
-  $scope.loadVideo = function(youtubeLink) {
+	
+  $scope.loadVideo = function() {
   	var re = /v=([\w-]+)/;
   	var matched = $scope.whole.video_link.match(re);
   	if (matched.length != 2) {
@@ -56,15 +64,43 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   	}
   	$scope.whole.video_id = matched[1];
   	console.log($scope.whole.video_id);
-  	if ($scope.youtubeLoaded) {
+  	// Reset 
+  	// $scope.annotations = [];
+
+  	console.log('checking to see if we can load iframe', YoutubeAPILoaded.sharedObject.youtubeLoaded);
+  	if (YoutubeAPILoaded.sharedObject.youtubeLoaded) {
+  		console.log('should recreate new player now');
+  		if ($scope.player != undefined) $scope.player.destroy();
   		$scope.player = new YT.Player('ytplayer', {
-	      height: '390',
-	      width: '640',
-	      videoId: $scope.whole.video_id
+	      height: $scope.videoDim.height,
+	      width: $scope.videoDim.width,
+	      videoId: $scope.whole.video_id,
+	      events: {
+	      	'onReady': onPlayerReady
+	      }
 	    });
+  		console.log('duration is', $scope.player);
+	    $scope.whole.duration = $scope.player.getDuration();
+  		$http.get("/queryyt/" + $scope.whole.video_id).success(function(data) {
+  				var vidTitle = data.items[0].snippet.title
+  				$scope.whole.title = vidTitle;
+     });
+
   	}
   };
 
+  onPlayerReady = function(event) {
+  	console.log('the player has loaded');
+  	console.log($scope.player.getDuration());
+  }
+
+  // All variables are reset when this controller starts again (clicking on the tab), so we attempt to auto load the iframe if possible 
+  if ($scope.whole.video_link) {
+  	$scope.loadVideo();	
+  }
+  
+
+  // Allow user to create an individual annotation
   $scope.annotate = function() {
   	var state = $scope.player.getPlayerState();
   	// TODO: robust casework, what about buffering?
@@ -77,15 +113,44 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   	}
   };
 
+  // Add individual annotation to list of annotations
   $scope.completeAnnotation = function() {
   	$scope.allowAnnotation = false;
-  	$scope.annotations.push($scope.curAnn);
+  	// $scope.annotations.push($scope.curAnn);
+  	var insertionInd = locationOf($scope.curAnn, $scope.annotations);
+  	$scope.annotations.splice(insertionInd, 0, $scope.curAnn);
   	$scope.curAnn = {
   		duration: 5,
   		content: ''
   	};
 		console.log('list of annotations', $scope.annotations);
   	$scope.player.playVideo();
+  };
+
+  // Really need tests
+  // http://stackoverflow.com/questions/1344500/efficient-way-to-insert-a-number-into-a-sorted-array-of-numbers
+  locationOf = function(elem, arr, start, end) {
+  	if (arr.length == 0) return 0;
+  	var start = start || 0;
+  	var end = end || arr.length;
+  	var pivot = parseInt((end + start) / 2, 10);
+  	if (arr[pivot].start_time == elem.start_time) return pivot;
+  	if (end - start <= 1) {
+  		if (arr[pivot].start_time > elem.start_time) {
+  			return pivot;
+  		} else {
+  			return pivot + 1;
+  		} 
+  	}
+  	if (arr[pivot].start_time < elem.start_time) {
+	    return locationOf(elem, arr, pivot, end);
+	  } else {
+	    return locationOf(elem, arr, start, pivot);
+	  }
+  };
+
+  $scope.deleteAnn = function(ind) {
+  	$scope.annotations.splice(ind, 1);
   };
 
   $scope.exit = function() {
@@ -117,8 +182,6 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   	console.log('going to publish these annotations!');
   	// TODO: allow option for public or unlisted
   	$scope.whole.privacy = 'public';
-  	// TODO: allow user to give title
-  	$scope.whole.title = 'My placeholder title';
   	$scope.whole.annotations = $scope.annotations;
   	var data = {annotationWhole: $scope.whole}
   	$http.post('/create', data).
@@ -129,13 +192,36 @@ var CreateCtrl = function($scope, $http, $window, $interval) {
   		});
   };
 
+  $scope.makeSingleVisualAnn = function(ann) {
+  	// $scope.$watch( "player" , function(newValue, oldValue) {
+  	// 	console.log('watched value of scope.player');
+  	// 	console.log(newValue);
+  	// 	console.log($scope.player);
+  	// });
+  	// console.log('yes!!!!', ann, $scope.whole.duration);  	
+  	var annWidth = ann.duration / 198 * $scope.videoDim.width;
+  	var annLeft = ann.start_time / 198 * $scope.videoDim.width;
+  	return {
+	  	border: '2px solid',
+	  	top: '6px',
+	  	position: 'absolute',
+	  	width: annWidth + 'px',
+	  	left: annLeft + 'px',
+	  	height: '10px',
+	  	cursor: 'pointer',
+	  	'border-radius': '2px',
+	  	'background-color': 'green'
+	  };
+  }
+
   // This gets called once the Youtube iframe API code has loaded
   $window.onYouTubeIframeAPIReady = function() {
-  	$scope.youtubeLoaded = true;
+  	// $scope.youtubeLoaded = true;
+  	YoutubeAPILoaded.sharedObject.youtubeLoaded = true;
   	$scope.loadVideo();
   	console.log('loaded yt player API');
   };
 };
 
-CreateCtrl.$inject = ['$scope', '$http', '$window', '$interval'];
+CreateCtrl.$inject = ['$scope', '$http', '$window', '$interval', 'YoutubeAPILoaded'];
 
