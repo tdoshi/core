@@ -4,7 +4,7 @@ var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded) {
   	video_link: "https://www.youtube.com/watch?v=UA0wb6E3hyg",
   	video_id: "UA0wb6E3hyg",
   	title: "placeholder",
-  	duration: 100
+  	duration: 197
   };
   $scope.error = "";
   $scope.videoDim = {
@@ -80,7 +80,8 @@ var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded) {
 	      }
 	    });
   		console.log('duration is', $scope.player);
-	    $scope.whole.duration = $scope.player.getDuration();
+	    // $scope.whole.duration = $scope.player.getDuration();
+
   		$http.get("/queryyt/" + $scope.whole.video_id).success(function(data) {
   				var vidTitle = data.items[0].snippet.title
   				$scope.whole.title = vidTitle;
