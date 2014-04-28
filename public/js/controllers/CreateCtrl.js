@@ -1,4 +1,4 @@
-var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded) {
+var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded, UserService) {
   // The whole annotation, which includes many individual annotations
   $scope.whole = {
   	video_link: "https://www.youtube.com/watch?v=UA0wb6E3hyg",
@@ -15,6 +15,11 @@ var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded) {
   	width: $scope.videoDim.width + 'px',
   	'background-color': '#F9F9F9'
   };
+
+  UserService.
+    getCurrentUser().
+    success(function(user) { console.log(user); $scope.user = user; }).
+    error(function() { $scope.user = {}; });
 
   // $scope.annotations = [];
   $scope.annotations = [
@@ -187,6 +192,7 @@ var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded) {
   	var data = {annotationWhole: $scope.whole}
   	$http.post('/create', data).
   		success(function(data) {
+        if (data.user == null) $window.location = "/splash";
   			console.log("Got data back!", data);
   		}).error(function(err) {
   			console.log('unable to save this to your profile', err);
@@ -224,5 +230,5 @@ var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded) {
   };
 };
 
-CreateCtrl.$inject = ['$scope', '$http', '$window', '$interval', 'YoutubeAPILoaded'];
+CreateCtrl.$inject = ['$scope', '$http', '$window', '$interval', 'YoutubeAPILoaded', 'UserService'];
 
