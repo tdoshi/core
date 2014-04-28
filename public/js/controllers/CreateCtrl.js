@@ -192,6 +192,7 @@ var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded, U
   	var data = {annotationWhole: $scope.whole}
   	$http.post('/create', data).
   		success(function(data) {
+        if (data.user == null) $window.location = "/splash";
   			console.log("Got data back!", data);
   		}).error(function(err) {
   			console.log('unable to save this to your profile', err);
