@@ -1,4 +1,4 @@
-var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded) {
+var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded, UserService) {
   // The whole annotation, which includes many individual annotations
   $scope.whole = {
   	video_link: "https://www.youtube.com/watch?v=UA0wb6E3hyg",
@@ -15,6 +15,11 @@ var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded) {
   	width: $scope.videoDim.width + 'px',
   	'background-color': '#F9F9F9'
   };
+
+  UserService.
+    getCurrentUser().
+    success(function(user) { console.log(user); $scope.user = user; }).
+    error(function() { $scope.user = {}; });
 
   // $scope.annotations = [];
   $scope.annotations = [
@@ -224,5 +229,5 @@ var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded) {
   };
 };
 
-CreateCtrl.$inject = ['$scope', '$http', '$window', '$interval', 'YoutubeAPILoaded'];
+CreateCtrl.$inject = ['$scope', '$http', '$window', '$interval', 'YoutubeAPILoaded', 'UserService'];
 

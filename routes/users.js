@@ -7,7 +7,6 @@ exports.list = function (req, res) {
 }
 
 exports.findOne = function (req, res) {
-	// TODO: check if user is signed in here
 	var userid = req.params.id;
 	db.User.findOne({ _id: userid }, function(err, user) {
 		db.AnnotationWhole.find({ _creator: userid, privacy: 'public' }, 'title video_id updated_at', function(err, annList) {
@@ -18,5 +17,17 @@ exports.findOne = function (req, res) {
 			};
 			res.send(data);
 		});
-	})
+	});
 }
+
+// Get data of currently signed in user
+exports.me = function(req, res) {
+  db.User
+    .findOne( { _id: req.user._id }, function(err, user) {
+    	if (err) {
+        error(res, 'User ' + req.user.id + ' does not exist.');
+      } else {
+        res.send(user);
+      }
+    });
+};

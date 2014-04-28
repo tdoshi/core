@@ -106,12 +106,24 @@ passport.use(new FacebookStrategy(
   }
 ));
 
+// Source: http://scotch.io/tutorials/javascript/easy-node-authentication-facebook
+// route middleware to make sure a user is logged in
+function ensureLoggedIn(req, res, next) {
+  if (req.isAuthenticated()) {
+    next();
+  } else {
+    console.log('user is not signed in, redirecting');
+    res.send({ user: null });
+  }
+}
+
 // Add routes here
 app.get('/splash', index.splash);
 app.get('/', index.view);
 app.get('/users', users.list);
-app.get('/user/:id', users.findOne);
-app.post('/create', ann.create);
+app.get('/profile/me', ensureLoggedIn, users.me);
+app.get('/profile/:id', users.findOne);
+app.post('/create', ensureLoggedIn, ann.create);
 app.get('/consume/:id', ann.consume);
 app.get('/queryyt/:id', ann.queryYoutube);
 
