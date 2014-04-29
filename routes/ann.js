@@ -34,7 +34,7 @@ exports.consume = function(req, res) {
 // Retrieve data about video from youtube.
 // Reference: https://developers.google.com/youtube/v3/getting-started
 exports.queryYoutube = function(req, res) {
-	https.get("https://www.googleapis.com/youtube/v3/videos?id=" + req.params.id + "&key=" + process.env.GOOGLE_PUBLIC_API_SERVER + "&fields=items(id,snippet(title),statistics)&part=snippet,statistics", function(resp){
+	https.get("https://www.googleapis.com/youtube/v3/videos?id=" + req.params.id + "&key=" + process.env.GOOGLE_PUBLIC_API_SERVER + "&fields=items(id,snippet(title),statistics,contentDetails)&part=snippet,statistics,contentDetails", function(resp){
 		var str = '';
 	  // append chunk of data to str
 	  resp.on('data', function (chunk) {
