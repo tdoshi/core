@@ -1,4 +1,4 @@
-var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded, UserService) {
+var CreateCtrl = function($scope, $http, $window, $interval, $timeout, UserService, youtubePlayerApi) {
   // The whole annotation, which includes many individual annotations
   $scope.whole = {
   	video_link: "https://www.youtube.com/watch?v=UA0wb6E3hyg",
@@ -52,64 +52,51 @@ var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded, U
   	VIDEO_CUED: 5
   });
 	
+  $scope.getVideoData = function(video_id) {
+    $http.get("/queryyt/" + $scope.whole.video_id).success(function(data) {
+      console.log(data);
+      var vidTitle = data.items[0].snippet.title
+      $scope.whole.title = vidTitle;
+      // PT3M18S or PT1H27M5S
+      var durationStr = data.items[0].contentDetails.duration;
+      $scope.whole.duration = youtubePlayerApi.getDuration(durationStr);
+      console.log($scope.whole.duration);
+    });
+  };
+
+  $scope.init = function() {
+    youtubePlayerApi.bindVideoPlayer('ytplayer');
+    $scope.$on('apiReady',function () {
+      $scope.player = youtubePlayerApi.loadPlayer($scope.whole.video_id);
+    });
+    if ($scope.whole.video_id) $scope.getVideoData($scope.whole.video_id);
+  };
+  $scope.init();
+
   $scope.loadVideo = function() {
   	var re = /v=([\w-]+)/;
   	var matched = $scope.whole.video_link.match(re);
   	if (matched.length != 2) {
   		$scope.error = 'failed to parse the youtube link';
-  		console.log($scope.error);
   		// TODO: better error checking here
   		return;
   	}
   	// All Youtube video ids are 11 characters
   	if (matched[1].length != 11) {
-  		// TODO: better error checking here
   		$scope.error = 'that is not a valid Youtube ID'
   		return;
   	}
   	$scope.whole.video_id = matched[1];
-  	console.log($scope.whole.video_id);
-  	// Reset 
-  	// $scope.annotations = [];
-
-  	console.log('checking to see if we can load iframe', YoutubeAPILoaded.sharedObject.youtubeLoaded);
-  	if (YoutubeAPILoaded.sharedObject.youtubeLoaded) {
-  		console.log('should recreate new player now');
-  		if ($scope.player != undefined) $scope.player.destroy();
-  		$scope.player = new YT.Player('ytplayer', {
-	      height: $scope.videoDim.height,
-	      width: $scope.videoDim.width,
-	      videoId: $scope.whole.video_id,
-	      events: {
-	      	'onReady': onPlayerReady
-	      }
-	    });
-  		console.log('duration is', $scope.player);
-	    // $scope.whole.duration = $scope.player.getDuration();
-
-  		$http.get("/queryyt/" + $scope.whole.video_id).success(function(data) {
-  				var vidTitle = data.items[0].snippet.title
-  				$scope.whole.title = vidTitle;
-     });
-
-  	}
+    // Reset 
+    $scope.annotations = [];
+    $scope.player = youtubePlayerApi.loadPlayer($scope.whole.video_id);
+    $scope.getVideoData($scope.whole.video_id);
   };
-
-  onPlayerReady = function(event) {
-  	console.log('the player has loaded');
-  	console.log($scope.player.getDuration());
-  }
-
-  // All variables are reset when this controller starts again (clicking on the tab), so we attempt to auto load the iframe if possible 
-  if ($scope.whole.video_link) {
-  	$scope.loadVideo();	
-  }
-  
 
   // Allow user to create an individual annotation
   $scope.annotate = function() {
   	var state = $scope.player.getPlayerState();
-  	// TODO: robust casework, what about buffering?
+  	// TODO: robust casework, e.g. what about buffering?
   	if (state == VideoStatusEnum.PLAYING) {
   		$scope.allowAnnotation = true;
   		$scope.player.pauseVideo();
@@ -160,7 +147,6 @@ var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded, U
   };
 
   $scope.exit = function() {
-  	console.log('yet another function');
   	$scope.allowAnnotation = false;
   };
 
@@ -200,35 +186,15 @@ var CreateCtrl = function($scope, $http, $window, $interval, YoutubeAPILoaded, U
   };
 
   $scope.makeSingleVisualAnn = function(ann) {
-  	// $scope.$watch( "player" , function(newValue, oldValue) {
-  	// 	console.log('watched value of scope.player');
-  	// 	console.log(newValue);
-  	// 	console.log($scope.player);
-  	// });
-  	// console.log('yes!!!!', ann, $scope.whole.duration);  	
-  	var annWidth = ann.duration / 198 * $scope.videoDim.width;
-  	var annLeft = ann.start_time / 198 * $scope.videoDim.width;
-  	return {
-	  	border: '2px solid',
-	  	top: '6px',
-	  	position: 'absolute',
+  	var annWidth = ann.duration / $scope.whole.duration * $scope.videoDim.width;
+  	var annLeft = ann.start_time / $scope.whole.duration * $scope.videoDim.width;
+  	// both annLeft and annWidth should be a fraction, less than 1
+    return {
 	  	width: annWidth + 'px',
-	  	left: annLeft + 'px',
-	  	height: '10px',
-	  	cursor: 'pointer',
-	  	'border-radius': '2px',
-	  	'background-color': 'green'
+	  	left: annLeft + 'px'
 	  };
   }
-
-  // This gets called once the Youtube iframe API code has loaded
-  $window.onYouTubeIframeAPIReady = function() {
-  	// $scope.youtubeLoaded = true;
-  	YoutubeAPILoaded.sharedObject.youtubeLoaded = true;
-  	$scope.loadVideo();
-  	console.log('loaded yt player API');
-  };
 };
 
-CreateCtrl.$inject = ['$scope', '$http', '$window', '$interval', 'YoutubeAPILoaded', 'UserService'];
+CreateCtrl.$inject = ['$scope', '$http', '$window', '$interval', '$timeout', 'UserService', 'youtubePlayerApi'];
 

@@ -49,3 +49,13 @@
 .annotationDown {
 	margin-top: 30px;
 }
+
+.singleVisualAnn {
+	border: 2px solid;
+	top: 6px;
+	position: absolute;
+	height: 10px;
+	cursor: pointer;
+	border-radius: 2px;
+	background-color: green;
+}
