@@ -9,10 +9,9 @@
 	  <button type="submit" class="btn btn-primary" ng-click="loadVideo()">Submit</button>
   </div>
   <hr>
-  <div class="container" ng-show="whole.video_id">
   	<div class="row">
   		<div class="col-xs-7">
-  			<div id="ytplayer"></div>  	
+  			<div id="ytplayer"></div>
   			<div id="annContainer" ng-style="visualAnnStyle">
   				<div class="singleVisualAnn" ng-repeat="ann in annotations" ng-style="makeSingleVisualAnn(ann)" ng-click="playSnippet(ann)"></div>
   			</div>		
@@ -39,7 +38,6 @@
 	  			</div>
   			</div>
   		</div>
-
   		<div class="col-xs-5" ng-show="annotations.length > 0">
   			<!-- <button class="btn btn-danger pull-left" ng-click="startOver()">Start Over</button> -->
   			<button class="btn btn-primary pull-right" ng-click="publish()">Publish!</button>
@@ -66,6 +64,6 @@
 					</ul>
   			</div>
   		</div>
-  	</div>
+  	
   </div>
 </form>
