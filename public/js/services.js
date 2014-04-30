@@ -3,7 +3,7 @@ angular.module('ytann.services', ['ng'])
     var service = $rootScope.$new(true);
 
     // Youtube callback when API is ready
-    window.onYouTubeIframeAPIReady = function() {
+    $window.onYouTubeIframeAPIReady = function() {
       console.log('Youtube API is ready');
       $rootScope.$broadcast('apiReady');
     };
