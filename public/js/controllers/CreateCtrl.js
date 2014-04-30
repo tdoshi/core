@@ -18,8 +18,8 @@ var CreateCtrl = function($scope, $http, $window, $interval, $timeout, UserServi
 
   UserService.
     getCurrentUser().
-    success(function(user) { console.log(user); $scope.user = user; }).
-    error(function() { $scope.user = {}; });
+    success(function(data) { console.log(data); $scope.user = data.user; }).
+    error(function() { $scope.user = null; });
 
   // $scope.annotations = [];
   $scope.annotations = [
@@ -56,7 +56,17 @@ var CreateCtrl = function($scope, $http, $window, $interval, $timeout, UserServi
     $http.get("/queryyt/" + $scope.whole.video_id).success(function(data) {
       console.log(data);
       var vidTitle = data.items[0].snippet.title
-      $scope.whole.title = vidTitle;
+      console.log($scope.user);
+      if ($scope.user) {        
+        if (vidTitle.length > 45) {
+          $scope.whole.title = $scope.user.first_name + " on '" + vidTitle.substring(0, 35) + "...'";
+        } else {
+          $scope.whole.title = $scope.user.first_name + " on '" + vidTitle + "'";
+        }
+      } else {
+        $scope.whole.title = vidTitle;
+      }
+      
       // PT3M18S or PT1H27M5S
       var durationStr = data.items[0].contentDetails.duration;
       $scope.whole.duration = youtubePlayerApi.getDuration(durationStr);
